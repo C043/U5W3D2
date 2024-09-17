@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +24,12 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(AuthorizationDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorsDTO handleDenied(AuthorizationDeniedException ex) {
+        return new ErrorsDTO("Non sei autorizzato", LocalDateTime.now());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(MultipartException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorsDTO handleUnauthorized(MultipartException ex) {
         return new ErrorsDTO("Non sei autorizzato", LocalDateTime.now());
     }
 

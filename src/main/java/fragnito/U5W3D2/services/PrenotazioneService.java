@@ -5,6 +5,7 @@ import fragnito.U5W3D2.entities.Prenotazione;
 import fragnito.U5W3D2.entities.Viaggio;
 import fragnito.U5W3D2.exceptions.BadRequestException;
 import fragnito.U5W3D2.exceptions.NotFoundException;
+import fragnito.U5W3D2.exceptions.UnauthorizedException;
 import fragnito.U5W3D2.payloads.MinePrenotazioneDTO;
 import fragnito.U5W3D2.payloads.PrenotazioneDTO;
 import fragnito.U5W3D2.payloads.PrenotazioneOwnershipDTO;
@@ -76,9 +77,10 @@ public class PrenotazioneService {
         return found;
     }
 
-    public Prenotazione updateMinePrenotazione(int id, MinePrenotazioneDTO body) {
+    public Prenotazione updateMinePrenotazione(Dipendente currentUser, int id, MinePrenotazioneDTO body) {
         Prenotazione found = this.getPrenotazioneById(id);
         Viaggio viaggio = this.viaggioService.getViaggioById(body.viaggioId());
+        if (currentUser.getId() != found.getDipendente().getId()) throw new UnauthorizedException("Non sei autorizzato");
         found.setNote(body.note());
         found.setViaggio(viaggio);
         found.setDataRichiesta(LocalDate.now());
@@ -88,6 +90,12 @@ public class PrenotazioneService {
 
     public void deletePrenotazione(int id) {
         Prenotazione found = this.getPrenotazioneById(id);
+        this.prenotazioneRepository.delete(found);
+    }
+
+    public void deleteMinePrenotazione(Dipendente currentUser, int id) {
+        Prenotazione found = this.getPrenotazioneById(id);
+        if (found.getDipendente().getId() != currentUser.getId()) throw new UnauthorizedException("Non sei autorizzato");
         this.prenotazioneRepository.delete(found);
     }
 

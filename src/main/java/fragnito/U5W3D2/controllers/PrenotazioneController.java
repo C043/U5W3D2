@@ -74,7 +74,7 @@ public class PrenotazioneController {
     public RespDTO putPrenotazione(@AuthenticationPrincipal Dipendente currentUser, @PathVariable int prenotazioneId, @RequestBody @Validated MinePrenotazioneDTO body,
                                    BindingResult validation) {
         this.validation.validate(validation);
-        Prenotazione prenotazione = this.prenotazioneService.updateMinePrenotazione(prenotazioneId, body);
+        Prenotazione prenotazione = this.prenotazioneService.updateMinePrenotazione(currentUser, prenotazioneId, body);
         return new RespDTO(prenotazione.getId());
     }
 
@@ -88,7 +88,7 @@ public class PrenotazioneController {
     @DeleteMapping("/me/{prenotazioneId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMinePrenotazione(@AuthenticationPrincipal Dipendente currentUser, @PathVariable int prenotazioneId) {
-        this.prenotazioneService.deletePrenotazione(prenotazioneId);
+        this.prenotazioneService.deleteMinePrenotazione(currentUser, prenotazioneId);
     }
 
     @PatchMapping("/{prenotazioneId}/dipendente")

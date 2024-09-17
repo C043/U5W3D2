@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties({"password", "role"})
+@JsonIgnoreProperties({"password", "role", "authorities"})
 @NoArgsConstructor
 public class Dipendente implements UserDetails {
     @Setter(AccessLevel.NONE)

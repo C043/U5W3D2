@@ -1,10 +1,10 @@
 package fragnito.U5W3D2.security;
 
 import fragnito.U5W3D2.entities.Dipendente;
+import fragnito.U5W3D2.exceptions.UnauthorizedException;
 import fragnito.U5W3D2.services.DipendenteService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) throw new UnavailableException("Inserisci correttamente il token nell'autorizzasione");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) throw new UnauthorizedException("Inserisci correttamente il token nell'autorizzazione");
         String accessToken = authHeader.substring(7);
         jwtTools.verifyToken(accessToken);
         String id = jwtTools.extractIdFromToken(accessToken);
