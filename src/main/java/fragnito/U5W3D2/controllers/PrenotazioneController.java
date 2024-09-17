@@ -49,7 +49,7 @@ public class PrenotazioneController {
         return this.prenotazioneService.getAllPrenotazioni(page, size, sortBy);
     }
 
-    @GetMapping
+    @GetMapping("/me")
     public Page<Prenotazione> getAllMinePrenotazioni(@AuthenticationPrincipal Dipendente currentUser, @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "5") int size,
                                                      @RequestParam(defaultValue = "id") String sortBy) {

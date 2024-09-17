@@ -5,6 +5,7 @@ import fragnito.U5W3D2.exceptions.Validation;
 import fragnito.U5W3D2.payloads.AuthDTO;
 import fragnito.U5W3D2.payloads.NewDipendenteDTO;
 import fragnito.U5W3D2.payloads.RespDTO;
+import fragnito.U5W3D2.payloads.UserLoginRespDTO;
 import fragnito.U5W3D2.services.AuthService;
 import fragnito.U5W3D2.services.DipendenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ public class AuthController {
     private Validation validation;
 
     @PostMapping("/login")
-    public String login(@RequestBody AuthDTO body) {
-        return this.authService.generateToken(body);
+    public UserLoginRespDTO login(@RequestBody AuthDTO body) {
+        return new UserLoginRespDTO(this.authService.generateToken(body));
     }
 
     @PostMapping("/register")
