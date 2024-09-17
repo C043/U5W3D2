@@ -38,6 +38,11 @@ public class DipendenteController {
         return this.dipendenteService.getDipendenteById(dipendenteId);
     }
 
+    @GetMapping("/me")
+    public Dipendente getMyProfile(@AuthenticationPrincipal Dipendente dipendente) {
+        return this.dipendenteService.getDipendenteById(dipendente.getId());
+    }
+
     @PutMapping("/{dipendenteId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public RespDTO putDipendente(@PathVariable int dipendenteId, @RequestBody @Validated NewDipendenteDTO body, BindingResult validation) {
