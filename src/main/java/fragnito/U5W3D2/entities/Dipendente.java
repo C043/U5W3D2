@@ -1,5 +1,6 @@
 package fragnito.U5W3D2.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties({"password", "role"})
 @NoArgsConstructor
 public class Dipendente implements UserDetails {
     @Setter(AccessLevel.NONE)

@@ -8,6 +8,7 @@ import fragnito.U5W3D2.exceptions.NotFoundException;
 import fragnito.U5W3D2.payloads.NewDipendenteDTO;
 import fragnito.U5W3D2.repositories.DipendenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +23,12 @@ public class DipendenteService {
     @Autowired
     private Cloudinary cloudinaryUploader;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Dipendente saveDipendente(NewDipendenteDTO body) {
         if (this.dipendenteRepository.existsByEmail(body.email())) throw new BadRequestException("Esiste già un utente con questa email.");
-        Dipendente newDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), body.password());
+        Dipendente newDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), passwordEncoder.encode(body.password()));
         newDipendente.setAvatar("https://ui-avatars.com/api/?name=" + newDipendente.getNome() + "+" + newDipendente.getCognome());
         this.dipendenteRepository.save(newDipendente);
         return newDipendente;
