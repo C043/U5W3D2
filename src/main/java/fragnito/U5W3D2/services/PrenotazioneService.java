@@ -5,6 +5,7 @@ import fragnito.U5W3D2.entities.Prenotazione;
 import fragnito.U5W3D2.entities.Viaggio;
 import fragnito.U5W3D2.exceptions.BadRequestException;
 import fragnito.U5W3D2.exceptions.NotFoundException;
+import fragnito.U5W3D2.payloads.MinePrenotazioneDTO;
 import fragnito.U5W3D2.payloads.PrenotazioneDTO;
 import fragnito.U5W3D2.payloads.PrenotazioneOwnershipDTO;
 import fragnito.U5W3D2.repositories.PrenotazioneRepository;
@@ -39,9 +40,25 @@ public class PrenotazioneService {
         return prenotazione;
     }
 
+    public Prenotazione saveMinePrenotazione(Dipendente dipendente, MinePrenotazioneDTO body) {
+        Viaggio viaggio = this.viaggioService.getViaggioById(body.viaggioId());
+        if (!this.prenotazioneRepository.filterPrenotazioniByUserAndData(dipendente.getId(), viaggio.getData()).isEmpty())
+            throw new BadRequestException("Il dipendente " +
+                    "è già impegnato nella data richiesta");
+        Prenotazione prenotazione = new Prenotazione(dipendente, viaggio, body.note());
+        this.prenotazioneRepository.save(prenotazione);
+        return prenotazione;
+
+    }
+
     public Page<Prenotazione> getAllPrenotazioni(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.prenotazioneRepository.findAll(pageable);
+    }
+
+    public Page<Prenotazione> getMinePrenotazioni(Dipendente dipendente, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.prenotazioneRepository.findByDipendente(dipendente, pageable);
     }
 
     public Prenotazione getPrenotazioneById(int id) {
@@ -51,6 +68,16 @@ public class PrenotazioneService {
     public Prenotazione updatePrenotazione(int id, PrenotazioneDTO body) {
         Prenotazione found = this.getPrenotazioneById(id);
         if (found.getDipendente().getId() != body.dipendenteId()) throw new BadRequestException("Endpoint sbagliato per cambiare assegnazione di prenotazione");
+        Viaggio viaggio = this.viaggioService.getViaggioById(body.viaggioId());
+        found.setNote(body.note());
+        found.setViaggio(viaggio);
+        found.setDataRichiesta(LocalDate.now());
+        this.prenotazioneRepository.save(found);
+        return found;
+    }
+
+    public Prenotazione updateMinePrenotazione(int id, MinePrenotazioneDTO body) {
+        Prenotazione found = this.getPrenotazioneById(id);
         Viaggio viaggio = this.viaggioService.getViaggioById(body.viaggioId());
         found.setNote(body.note());
         found.setViaggio(viaggio);
